@@ -3,14 +3,21 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.geom.Line2D;
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
 
 import javax.swing.JFrame;
+import javax.imageio.ImageIO;
 import javax.swing.ButtonGroup;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.JRadioButton;
 import javax.swing.JLabel;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 
 
@@ -18,7 +25,7 @@ public class Frame1 extends JPanel{
 	
 	
 	
-    private MouseHandler mouseHandler = new MouseHandler();
+//    private MouseHandler mouseHandler = new MouseHandler();
     private Point p1 = new Point(100, 100);
     private Point p2 = new Point(540, 380);
     private boolean drawing;
@@ -42,9 +49,6 @@ public class Frame1 extends JPanel{
 	
 	private static int[][] points = new int [2][100];
 
-	
-	
-	
 
 	private JFrame frame;
 	
@@ -52,82 +56,97 @@ public class Frame1 extends JPanel{
 	private int[][] lines = new int [5][20];
 	public int linecounter = 0;
 	
+	public boolean easy = false;
 	
+	private int[][] easy1 = new int [5][5];
+	private int[][] easy2 = new int [5][5];
 	
+	private int[][] med1 = new int [5][7];
+	private int[][] med2 = new int [5][7];
+	
+	private int[][] hard1 = new int [5][10];
+	
+	public boolean start = false;
+	
+	private int[][]goal = new int [5][10];
+	/**
+	 * @wbp.nonvisual location=968,679
+	 */
+	private final JButton button = new JButton("Add");
 	
 	
 	public Frame1() {
-		this.addMouseListener(mouseHandler);
-		this.addMouseMotionListener(mouseHandler);
+//		this.addMouseListener(mouseHandler);
+//		this.addMouseMotionListener(mouseHandler);
 		initialize();
 	}
 	
 
-	
-	private class MouseHandler extends MouseAdapter {
-
-		public boolean drawing = true;
-		
-		
-		
-		
-        @Override
-        public void mousePressed(MouseEvent e) {
-            drawing = true;
-         
-         
-            Point p1 = e.getPoint();
-            int x = e.getX();
-            int y = e.getY();
-            
-            
-            
-            for (int i = 1; i < points.length; i++) {
-            	int pointX = points[0][i];
-            	if ((x < pointX + 15) && (x > pointX - 15 )){
-            		if (((y < points[1][i] + 15) && (y > points[1][i] - 15))){
-            			p1.setLocation(points[0][i], points[1][i]);
-            		}   	
-            	}
-            }
-            
-            
-            p2 = p1;
-            repaint();
-        }
-
-        @Override
-        public void mouseReleased(MouseEvent e) {
-            drawing = false;
-            
-            int x = e.getX();
-            int y = e.getY();
-            
-            for (int i = 1; i < points.length; i++) {
-            	int pointX = points[0][i];
-            	if ((x < pointX + 15) && (x > pointX - 15 )){
-            		if (((y < points[1][i] + 15) && (y > points[1][i] - 15))){
-            			p2.setLocation(points[0][i], points[1][i]);
-            		}   	
-            	}
-            }
-            
-            
-            
-            
-            repaint();
-        }
-
-        @Override
-        public void mouseDragged(MouseEvent e) {
-            if (drawing) {
-                p2 = e.getPoint();
-                repaint();
-            }
-        }
-    }
-	
-	
+//	
+//	private class MouseHandler extends MouseAdapter {
+//
+//		public boolean drawing = true;
+//		
+//		
+//		
+//		
+//        @Override
+//        public void mousePressed(MouseEvent e) {
+//            drawing = true;
+//         
+//         
+//            Point p1 = e.getPoint();
+//            int x = e.getX();
+//            int y = e.getY();
+//            
+//            
+//            
+//            for (int i = 1; i < points.length; i++) {
+//            	int pointX = points[0][i];
+//            	if ((x < pointX + 15) && (x > pointX - 15 )){
+//            		if (((y < points[1][i] + 15) && (y > points[1][i] - 15))){
+//            			p1.setLocation(points[0][i], points[1][i]);
+//            		}   	
+//            	}
+//            }
+//            
+//            
+//            p2 = p1;
+//            repaint();
+//        }
+//
+//        @Override
+//        public void mouseReleased(MouseEvent e) {
+//            drawing = false;
+//            
+//            int x = e.getX();
+//            int y = e.getY();
+//            
+//            for (int i = 1; i < points.length; i++) {
+//            	int pointX = points[0][i];
+//            	if ((x < pointX + 15) && (x > pointX - 15 )){
+//            		if (((y < points[1][i] + 15) && (y > points[1][i] - 15))){
+//            			p2.setLocation(points[0][i], points[1][i]);
+//            		}   	
+//            	}
+//            }
+//            
+//            
+//            
+//            
+//            repaint();
+//        }
+//
+//        @Override
+//        public void mouseDragged(MouseEvent e) {
+//            if (drawing) {
+//                p2 = e.getPoint();
+//                repaint();
+//            }
+//        }
+//    }
+//	
+//	
 	
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -147,7 +166,117 @@ public class Frame1 extends JPanel{
 
 
 	private void initialize() {
+		
+		easy1[0][0] = 180;
+		easy1[1][0] = 360;
+		easy1[2][0] = 240;
+		easy1[3][0] = 240;
+		easy1[4][0] = 2;
+		
+		easy1[0][1] = 240;
+		easy1[1][1] = 240;
+		easy1[2][1] = 300;
+		easy1[3][1] = 360;
+		easy1[4][1] = 2;
+		
+		easy1[0][2] = 180;
+		easy1[1][2] = 360;
+		easy1[2][2] = 300;
+		easy1[3][2] = 360;
+		easy1[4][2] = 3;
+		
+		
+		
+		easy2[0][0] = 120;
+		easy2[1][0] = 120;
+		easy2[2][0] = 300;
+		easy2[3][0] = 120;
+		easy2[4][0] = 1;
+		
+		easy2[0][1] = 300;
+		easy2[1][1] = 120;
+		easy2[2][1] = 300;
+		easy2[3][1] = 300;
+		easy2[4][1] = 1;
+		
+		easy2[0][2] = 300;
+		easy2[1][2] = 300;
+		easy2[2][2] = 120;
+		easy2[3][2] = 300;
+		easy2[4][2] = 1;
+		
+		easy2[0][3] = 120;
+		easy2[1][3] = 300;
+		easy2[2][3] = 120;
+		easy2[3][3] = 120;
+		easy2[4][3] = 5;
+		
+		
+		hard1[0][0] = 180;
+		hard1[1][0] =180;
+		hard1[2][0] =300;
+		hard1[3][0] =120;
+		hard1[4][0] =2;
+		
+		hard1[0][1] = 300;
+		hard1[1][1] =120;
+		hard1[2][1] =420;
+		hard1[3][1] =180;
+		hard1[4][1] =2;
+		
+		hard1[0][2] = 420;
+		hard1[1][2] =180;
+		hard1[2][2] =420;
+		hard1[3][2] =360;
+		hard1[4][2] =3;
+		
+		hard1[0][3] = 420;
+		hard1[1][3] =360;
+		hard1[2][3] =180;
+		hard1[3][3] =360;
+		hard1[4][3] =3;
+		
+		hard1[0][4] = 180;
+		hard1[1][4] =360;
+		hard1[2][4] =420;
+		hard1[3][4] =180;
+		hard1[4][4] =3;
+		
+		hard1[0][5] = 420;
+		hard1[1][5] =180;
+		hard1[2][5] =180;
+		hard1[3][5] =180;
+		hard1[4][5] =1;
+		
+		hard1[0][6] = 180;
+		hard1[1][6] =180;
+		hard1[2][6] =180;
+		hard1[3][6] =360;
+		hard1[4][6] =1;
+		
+		hard1[0][7] = 180;
+		hard1[1][7] =180;
+		hard1[2][7] =420;
+		hard1[3][7] =360;
+		hard1[4][7] =1;
+		
+		
+		
+		
+		
+		
 		frame = new JFrame();
+		
+		
+		
+		
+		try{
+			frame.setContentPane(new JLabel(new ImageIcon(ImageIO.read(getClass().getResource("/test1.jpg")))));
+		} catch (IOException e){
+			e.printStackTrace();
+		}
+		
+		
 		frame.setBounds(100, 100, 1272, 864);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
@@ -166,26 +295,32 @@ public class Frame1 extends JPanel{
 		
 		
 		JRadioButton rdbtnGreen = new JRadioButton("Green");
+		rdbtnGreen.setBackground(Color.GREEN);
 		rdbtnGreen.setBounds(6, 632, 109, 23);
 		frame.getContentPane().add(rdbtnGreen);
 		
 		JRadioButton rdbtnRed = new JRadioButton("Red");
+		rdbtnRed.setBackground(Color.RED);
 		rdbtnRed.setBounds(131, 632, 109, 23);
 		frame.getContentPane().add(rdbtnRed);
 		
 		JRadioButton rdbtnBlue = new JRadioButton("Blue");
+		rdbtnBlue.setBackground(Color.BLUE);
 		rdbtnBlue.setBounds(263, 632, 109, 23);
 		frame.getContentPane().add(rdbtnBlue);
 		
-		JRadioButton rdbtnOrange = new JRadioButton("Orange");
+		JRadioButton rdbtnOrange = new JRadioButton("Yellow");
+		rdbtnOrange.setBackground(Color.ORANGE);
 		rdbtnOrange.setBounds(398, 632, 109, 23);
 		frame.getContentPane().add(rdbtnOrange);
 		
 		JRadioButton rdbtnPink = new JRadioButton("Pink");
+		rdbtnPink.setBackground(Color.PINK);
 		rdbtnPink.setBounds(6, 671, 109, 23);
 		frame.getContentPane().add(rdbtnPink);
 		
 		JRadioButton rdbtnCyan = new JRadioButton("Cyan");
+		rdbtnCyan.setBackground(Color.CYAN);
 		rdbtnCyan.setBounds(131, 671, 109, 23);
 		frame.getContentPane().add(rdbtnCyan);
 		
@@ -194,6 +329,7 @@ public class Frame1 extends JPanel{
 		frame.getContentPane().add(rdbtnBlack);
 		
 		JRadioButton rdbtnMagenta = new JRadioButton("Magenta");
+		rdbtnMagenta.setBackground(Color.MAGENTA);
 		rdbtnMagenta.setBounds(398, 671, 109, 23);
 		frame.getContentPane().add(rdbtnMagenta);
 		
@@ -227,33 +363,41 @@ public class Frame1 extends JPanel{
 		            		}
 		            		
 		            		
-		            		for (int q = 0; q < 20; q++){
-		            			if (lines[0][q] != 0) {
-		            				
-		            				if (lines[4][q] == 1) {
-		            					g2.setColor(Color.GREEN);
-		            				} else if (lines[4][q] == 2){
-		            					g2.setColor(Color.RED);
-		            				} else if (lines[4][q] == 3){
-		            					g2.setColor(Color.BLUE);
-		            				} else if (lines[4][q] == 4){
-		            					g2.setColor(Color.ORANGE);
-		            				} else if (lines[4][q] == 5){
-		            					g2.setColor(Color.PINK);
-		            				} else if (lines[4][q] == 6){
-		            					g2.setColor(Color.CYAN);
-		            				} else if (lines[4][q] == 7){
-		            					g2.setColor(Color.BLACK);
-		            				} else if (lines[4][q] == 8){
-		            					g2.setColor(Color.MAGENTA);
-		            				}
-		            				
-		            				
+//		            		if (!start){
+			            		for (int q = 0; q < 20; q++){
+			            			if (lines[0][q] != 0) {
+			            				
+			            				if (lines[4][q] == 1) {
+			            					g2.setColor(Color.GREEN);
+			            				} else if (lines[4][q] == 2){
+			            					g2.setColor(Color.RED);
+			            				} else if (lines[4][q] == 3){
+			            					g2.setColor(Color.BLUE);
+			            				} else if (lines[4][q] == 4){
+			            					g2.setColor(Color.ORANGE);
+			            				} else if (lines[4][q] == 5){
+			            					g2.setColor(Color.PINK);
+			            				} else if (lines[4][q] == 6){
+			            					g2.setColor(Color.CYAN);
+			            				} else if (lines[4][q] == 7){
+			            					g2.setColor(Color.BLACK);
+			            				} else if (lines[4][q] == 8){
+			            					g2.setColor(Color.MAGENTA);
+			            				}
 
-		            				g2.drawLine(lines[0][q], lines[1][q], lines[2][q], lines[3][q]);
-		            				this.revalidate();
-		            			}	       	
-		            		}
+			            				g2.drawLine(lines[0][q], lines[1][q], lines[2][q], lines[3][q]);
+			            				this.revalidate();
+			            				
+			            				
+			            			}	       	
+			            		}
+//		            		}
+		            		
+		            		
+
+		            		
+		            		
+		            		
 		            		
 		            	}
 		            }
@@ -273,6 +417,7 @@ public class Frame1 extends JPanel{
 		
 		panel.addMouseListener(new MouseAdapter() { 
 	        public void mousePressed(MouseEvent e) { 
+	        	
 	          System.out.println(e); 
 	          System.out.println("drawing?: " + drawing);
 	          
@@ -338,20 +483,17 @@ public class Frame1 extends JPanel{
 	              				} else if (rdbtnMagenta.isSelected()){
 	              					lines[4][linecounter] = 8;
 	              				}
-	              				
-	              				
-	              				
-	              				
+	          				
 	              				
 		              			
 		              			linecounter++;
 		              			
 		              			System.out.println(linecounter);
 		              			
-		              			setVisible(true);
-		              			validate();
+//		              			setVisible(true);
+//		              			validate();
 
-		              			panel.validate();
+//		              			panel.validate();
 		              			panel.setVisible(false);
 		              			panel.setVisible(true);
 		              			
@@ -364,20 +506,10 @@ public class Frame1 extends JPanel{
 	        	  
 	        	  repaint();
 	        	  
-	          }
-	          
-	          
-	          
-	          
-	          
-	          
-	          
-	          
+	          }          	     
 	          
 	        } 
-	        
-	        
-	 
+
 	        
 	      });
 		
@@ -407,14 +539,122 @@ public class Frame1 extends JPanel{
 		            	}
 		            }
 		            
-		            g2.drawOval(x1, y1, 20, 20);
+		            g2.setStroke(new BasicStroke(4));
+		            
+		            
+		            if (start){
+		            	
+		            	int k = 0;
+		            	
+		            	if (easy) {
+		            		k = 5;
+		            	} else {
+		            		k = 8;
+		            	}
+		            	
+		            	
+			            for (int l = 0; l < k; l++) {
+			            	
+	            			if (goal[0][l] != 0) {
+	            				
+	            				if (goal[4][l] == 1) {
+	            					g2.setColor(Color.GREEN);
+	            				} else if (goal[4][l] == 2){
+	            					g2.setColor(Color.RED);
+	            				} else if (goal[4][l] == 3){
+	            					g2.setColor(Color.BLUE);
+	            				} else if (goal[4][l] == 4){
+	            					g2.setColor(Color.ORANGE);
+	            				} else if (goal[4][l] == 5){
+	            					g2.setColor(Color.PINK);
+	            				} else if (goal[4][l] == 6){
+	            					g2.setColor(Color.CYAN);
+	            				} else if (goal[4][l] == 7){
+	            					g2.setColor(Color.BLACK);
+	            				} else if (goal[4][l] == 8){
+	            					g2.setColor(Color.MAGENTA);
+	            				}
+
+	            				g2.drawLine(goal[0][l], goal[1][l], goal[2][l], goal[3][l]);
+	            				this.revalidate();
+	            			}
+			            }
+			            
+			            
+		            }
+		            
+		            
+		            
+
+		            
+		            
 		            
 		            			 }
 		};
 		panel_1.setBounds(633, 11, 600, 600);
 		frame.getContentPane().add(panel_1);
 		
+		JLabel lblResult = new JLabel("New label");
+		lblResult.setFont(new Font("Comic Sans MS", Font.PLAIN, 23));
+		lblResult.setBounds(643, 688, 416, 54);
+		frame.getContentPane().add(lblResult);
+		
+		lblResult.setVisible(false);
+		
+		
 		JButton btnNewButton = new JButton("Check!");
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				int wrong = 0;
+				int right = 0;
+				
+				for (int i = 0; i < 5; i++) {
+					for (int j = 0; j < 5; j++){
+						
+						if ((goal[j][i] != 0)){
+							if (j == 0){
+								if ((goal[j][i] == lines[j][i]) || (goal[j][i] == lines[j+1][i])){
+									right++;					
+								} else {
+									wrong++;
+								}
+							} else if (j < 4) {
+								if ((goal[j][i] == lines[j][i]) || (goal[j][i] == lines[j+1][i]) || (goal[j][i] == lines[j-1][i])){
+									right++;					
+								} else {
+									wrong++;								
+								}
+							} else if (j == 4){
+								if ((goal[j][i] == lines[j][i]) || (goal[j][i] == lines[j-1][i])){
+									right++;					
+								} else {
+									wrong++;								
+								}
+							}
+						}
+						if (wrong < 5 && right > wrong) {
+							lblResult.setText("You are Right! :)");
+							lblResult.setForeground(Color.GREEN);
+							lblResult.setVisible(true);
+						} else {
+							lblResult.setText("You are Wrong, Try again!");
+							lblResult.setForeground(Color.RED);
+							lblResult.setVisible(true);
+						}
+
+						
+						
+					}	
+				}
+				
+				System.out.println("right: " + right + " / wrong: " + wrong);
+				
+				
+				
+				
+			}
+		});
 		btnNewButton.setBounds(643, 622, 238, 43);
 		frame.getContentPane().add(btnNewButton);
 		
@@ -433,6 +673,8 @@ public class Frame1 extends JPanel{
 		group.add(rdbtnMagenta);
 		
 		JLabel lblDifficulty = new JLabel("Difficulty:");
+		lblDifficulty.setFont(new Font("Tahoma", Font.BOLD, 13));
+		lblDifficulty.setForeground(new Color(255, 255, 255));
 		lblDifficulty.setBounds(10, 731, 68, 23);
 		frame.getContentPane().add(lblDifficulty);
 		
@@ -453,6 +695,78 @@ public class Frame1 extends JPanel{
 		groupdif.add(rdbtnEasy);
 		groupdif.add(rdbtnHard);
 		groupdif.add(rdbtnMedium);
+		
+		JButton btnAdd = new JButton("Statistic");
+		btnAdd.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
+		btnAdd.setBounds(362, 719, 89, 23);
+		frame.getContentPane().add(btnAdd);
+		
+		JButton btnStart = new JButton("Start");
+		btnStart.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				start = true;
+				
+				for (int i = 0; i < 5; i++){
+					for (int j = 0; j < 20; j++){
+						lines[i][j] = 0;
+					}
+				}
+
+				
+				
+				lblResult.setVisible(false);
+				
+//				panel.repaint();
+//				panel.revalidate();
+				panel.setVisible(false);
+				panel.setVisible(true);
+//				
+//				panel.removeAll();
+//				panel.updateUI();
+				
+				
+				
+				if (Math.round(Math.random()) == 1) {
+					if (rdbtnEasy.isSelected()){
+						goal = easy2;
+						easy = true;
+					} else if (rdbtnHard.isSelected()) {
+						goal = hard1;
+						easy = false;
+					}
+				} else {
+					goal = easy1;
+					if (rdbtnHard.isSelected()) {
+						goal = hard1;
+					}
+				}
+				
+				for (int yy = 0; yy < 5; yy++){
+					for (int zz = 0; zz < goal.length; zz++) {
+						
+						System.out.println(goal[zz][yy]);					
+					}
+				}
+
+				
+		
+				
+				panel_1.setVisible(false);
+				panel_1.setVisible(true);
+				
+				
+
+				
+			}
+		});
+		btnStart.setBounds(362, 753, 89, 23);
+		frame.getContentPane().add(btnStart);
+		
+		
 
 	}
 	
@@ -480,12 +794,7 @@ public class Frame1 extends JPanel{
         		} else {
         			x2 = x;
         			y2 = y;
-        			
-        		
-        			
-        			
-        			
-        			
+      		
         		}  	       		
         	}
         }	
